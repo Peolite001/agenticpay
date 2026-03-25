@@ -437,6 +437,7 @@ impl AgenticPayContract {
             (symbol_short!("meta"), symbol_short!("del")),
             key,
         );
+    }
     /// Upgrade the contract WASM code. Admin-only.
     ///
     /// Uses Soroban's built-in upgrade mechanism which replaces the contract
