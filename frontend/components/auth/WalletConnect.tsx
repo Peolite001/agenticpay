@@ -40,11 +40,11 @@ export function WalletConnect() {
       <div className="space-y-3">
         {connectors.map((connector) => {
           // Track exactly which button was clicked for the loading spinner
-          const isThisLoading = isPending && variables?.connector?.id === connector.id;
+          const isThisLoading = isPending && variables?.connector?.uid === connector.uid;
 
           return (
             <Button
-              key={connector.id}
+              key={connector.uid}
               variant="outline"
               className="w-full justify-start gap-3 h-12 relative transition-all"
               onClick={() => connect({ connector })}
