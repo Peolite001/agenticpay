@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useRouter, usePathname } from 'next/navigation';
 import { useThemeStore } from '@/store/useThemeStore';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -16,8 +17,19 @@ import {
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Bell, LogOut, User, Settings, Sun, Moon, Clock } from 'lucide-react';
 import { toast } from 'sonner';
+import { useEffect, useState } from 'react';
+// 1. I added useNetwork to the existing wagmi import
 import { useDisconnect, useAccount } from 'wagmi';
 import { web3auth } from '@/lib/web3auth';
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
+import { getDashboardBreadcrumbs } from '@/lib/breadcrumbs';
 import { ThemeSettingsModal } from '@/components/theme/ThemeSettingsModal';
 
 const NetworkIndicator = () => {
@@ -53,6 +65,13 @@ export function Header() {
   const { isDark, mode, toggle, setIsDark } = useThemeStore();
   const { disconnect } = useDisconnect();
   const router = useRouter();
+  const pathname = usePathname();
+  const [breadcrumbs, setBreadcrumbs] = useState<any[]>([]);
+
+  useEffect(() => {
+    const items = getDashboardBreadcrumbs(pathname);
+    setBreadcrumbs(items);
+  }, [pathname]);
   const [themeSettingsOpen, setThemeSettingsOpen] = useState(false);
 
   const handleLogout = async () => {
@@ -96,30 +115,15 @@ export function Header() {
           <div className="flex items-center gap-4">
             <NetworkIndicator />
 
-            <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="relative">
-                <Bell className="h-5 w-5" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
-              </Button>
-
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={mode === 'manual' ? handleManualToggle : undefined}
-                title={mode === 'manual' ? (isDark ? 'Switch to light' : 'Switch to dark') : `Auto: ${mode}`}
-                className="relative"
-              >
-                {isDark ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-                {mode !== 'manual' && (
-                  <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-primary flex items-center justify-center">
-                    <Clock className="h-2 w-2 text-primary-foreground" />
-                  </span>
-                )}
-              </Button>
-
-              <Button variant="ghost" size="icon" onClick={() => setThemeSettingsOpen(true)}>
-                <Clock className="h-5 w-5" />
-              </Button>
+            {/* Theme schedule settings */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setThemeSettingsOpen(true)}
+              title="Dark mode schedule"
+            >
+              <Clock className="h-5 w-5" />
+            </Button>
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -154,6 +158,27 @@ export function Header() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Breadcrumb Navigation */}
+      {breadcrumbs.length > 0 && (
+        <div className="border-t border-gray-100 bg-gray-50/50 px-4 sm:px-6 py-3">
+          <Breadcrumb>
+            <BreadcrumbList>
+              {breadcrumbs.map((item, index) => (
+                <div key={index} className="flex items-center gap-1.5">
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href={item.href}>
+                      {item.label}
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
+                </div>
+              ))}
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
+      )}
       </header>
       <ThemeSettingsModal open={themeSettingsOpen} onClose={() => setThemeSettingsOpen(false)} />
     </>
