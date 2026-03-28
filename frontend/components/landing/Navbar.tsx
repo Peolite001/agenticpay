@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { usePathname } from 'next/navigation';
+import { LanguageSwitcher } from '../language/LanguageSwitcher';
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
