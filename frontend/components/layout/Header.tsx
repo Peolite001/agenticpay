@@ -32,6 +32,17 @@ import { TimezoneSettingsModal } from '@/components/settings/TimezoneSettingsMod
 import { getBrowserTimeZone, isValidTimeZone } from '@/lib/utils';
 import { useOfflineStatus } from '@/components/offline/OfflineProvider';
 
+// Our new CommandMenu!
+import { CommandMenu } from './CommandMenu';
+
+// I built the isolated NetworkIndicator component right here
+/* ---------------- TYPES ---------------- */
+type BreadcrumbItemType = {
+  label: string;
+  href: string;
+};
+
+/* ---------------- NETWORK INDICATOR ---------------- */
 const NetworkIndicator = () => {
   const { chain, isConnected } = useAccount();
 
@@ -128,6 +139,24 @@ export function Header() {
                         : `${queueLength} queued`}
                   </span>
                 </div>
+            
+            <CommandMenu />
+
+            {/* Notifications */}
+            <Button variant="ghost" size="icon">
+              <Bell className="h-5 w-5" />
+            </Button>
+
+            {/* Theme */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={mode === 'manual' ? handleManualToggle : undefined}
+            >
+              {isDark ? (
+                <Moon className="h-5 w-5" />
+              ) : (
+                <Sun className="h-5 w-5" />
               )}
 
               <LanguageSwitcher />
